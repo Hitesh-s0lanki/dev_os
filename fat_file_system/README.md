@@ -1,4 +1,4 @@
-Requirement
+Basic Requirement
 
 - any text editor
 - Make
@@ -9,7 +9,11 @@ install code
 
 ---
 
-    apt install make nasm qemu
+    make            # Builds bootloader, kernel, floppy image, and fat tool
+    make run        # Launches QEMU with the floppy
+    make clean      # Removes everything in build/
+
+    ./build/tools/fat build/main_floppy.img "TEST    TXT"
 
 ---
 
