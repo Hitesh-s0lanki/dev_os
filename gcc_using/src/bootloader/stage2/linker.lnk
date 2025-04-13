@@ -1,6 +1,0 @@
-system dos
-option map
-option quiet
-file build/stage2/c/main.obj
-file build/stage2/asm/puts.obj
-name build/stage2.bin
