@@ -1,4 +1,4 @@
-# 🧠 Build Your Own Operating System (BYOOS)
+# 🧠 Build Your Own Operating System
 
 A hands-on project to **develop a basic operating system** from scratch, while learning core OS fundamentals and exploring how Linux implements them.
 
