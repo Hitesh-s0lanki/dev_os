@@ -139,7 +139,8 @@ int fopen(const char* filename, const char* mode_str)
         res = -EINVARG;
         goto out;
     }
-
+    
+    
     // We cannot have just a root path 0:/ 0:/test.txt
     if (!root_path->first)
     {
@@ -154,13 +155,12 @@ int fopen(const char* filename, const char* mode_str)
         res = -EIO;
         goto out;
     }
-
-    if (!disk->filesystem)
-    {
+    
+    if (!disk->filesystem) {
         res = -EIO;
         goto out;
     }
-
+    
     mode = file_get_mode_by_string(mode_str);
     if (mode == FILE_MODE_INVALID)
     {

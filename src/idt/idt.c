@@ -107,15 +107,15 @@ int idt_register_interrupt_callback(int interrupt, INTERRUPT_CALLBACK_FUNCTION i
 
 void isr80h_register_command(int command_id, ISR80H_COMMAND command)
 {
-    // if (command_id < 0 || command_id >= GADGETOS_MAX_ISR80H_COMMANDS)
-    // {
-    //     panic("The command is out of bounds\n");
-    // }
+    if (command_id < 0 || command_id >= GADGETOS_MAX_ISR80H_COMMANDS)
+    {
+        panic("The command is out of bounds\n");
+    }
 
-    // if (isr80h_commands[command_id])
-    // {
-    //     panic("Your attempting to overwrite an existing command\n");
-    // }
+    if (isr80h_commands[command_id])
+    {
+        panic("Your attempting to overwrite an existing command\n");
+    }
 
     isr80h_commands[command_id] = command;
 }

@@ -4,6 +4,7 @@
 #include "memory/paging/paging.h"
 #include "disk/disk.h"
 #include "string/string.h"
+#include "fs/file.h"
 #include <stdint.h>
 #include <stddef.h>
 
@@ -52,6 +53,12 @@ void terminal_initialize(){
     }
 }
 
+void panic(const char* msg)
+{
+    print(msg);
+    while(1) {}
+}
+
 void print(const char* str) {
     size_t len = strlen(str);
     for (int i = 0; i < len; i++)
@@ -64,10 +71,16 @@ static struct paging_4gb_chunk* kernel_chunk = 0;
 
 void kernel_main () {
     terminal_initialize();    
-    print("Hitesh Solanki");
+    print("Hitesh Solanki\n");
 
     // Initialize the heap
     kheap_init();
+
+    // initialize filesystems
+    fs_init();
+
+    // Search and initialize the disks
+    disk_search_and_init();
 
     // Initialize the interrupt descriptor table
     idt_init();
@@ -83,4 +96,13 @@ void kernel_main () {
 
     // Enable the system interrupts
     enable_interrupts();
+
+    int fd = fopen("0:/hello.txt", "r");
+    if(fd) {
+        print("we opened hello.txt\n");
+    } else {
+        print("file not found hello.txt\n");
+    }
+
+    for(;;);
 }
