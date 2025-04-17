@@ -4,11 +4,10 @@
 #include "memory/heap/kheap.h"
 #include "memory/memory.h"
 #include "status.h"
-#include "config.h"
 
 static int pathparser_path_valid_format(const char* filename)
 {
-    int len = strnlen(filename, GADGETOS_MAX_PATH);
+    int len = strnlen(filename, PEACHOS_MAX_PATH);
     return (len >= 3 && isdigit(filename[0]) && memcmp((void*)&filename[1], ":/", 2) == 0);
 }
 
@@ -42,7 +41,7 @@ static struct path_root* pathparser_create_root(int drive_number)
 
 static const char* pathparser_get_path_part(const char** path)
 {
-    char* result_path_part = kzalloc(GADGETOS_MAX_PATH);
+    char* result_path_part = kzalloc(PEACHOS_MAX_PATH);
     if (!result_path_part)
     {
         return NULL;
@@ -118,7 +117,7 @@ struct path_root* pathparser_parse(const char* path, const char* current_directo
     struct path_part* first_part = NULL;
     struct path_part* part = NULL;
 
-    if (strlen(path) > GADGETOS_MAX_PATH)
+    if (strlen(path) > PEACHOS_MAX_PATH)
     {
         res = -1;
         goto out;

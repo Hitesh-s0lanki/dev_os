@@ -1,7 +1,6 @@
 #include "paging.h"
 #include "memory/heap/kheap.h"
 #include "status.h"
-
 void paging_load_directory(uint32_t *directory);
 
 static uint32_t *current_directory = 0;
@@ -25,12 +24,14 @@ struct paging_4gb_chunk *paging_new_4gb(uint8_t flags)
     return chunk_4gb;
 }
 
-void paging_switch(struct paging_4gb_chunk *directory) {
+void paging_switch(struct paging_4gb_chunk *directory)
+{
     paging_load_directory(directory->directory_entry);
     current_directory = directory->directory_entry;
 }
 
-void paging_free_4gb(struct paging_4gb_chunk *chunk) {
+void paging_free_4gb(struct paging_4gb_chunk *chunk)
+{
     for (int i = 0; i < 1024; i++)
     {
         uint32_t entry = chunk->directory_entry[i];
@@ -42,15 +43,18 @@ void paging_free_4gb(struct paging_4gb_chunk *chunk) {
     kfree(chunk);
 }
 
-uint32_t *paging_4gb_chunk_get_directory(struct paging_4gb_chunk *chunk) {
+uint32_t *paging_4gb_chunk_get_directory(struct paging_4gb_chunk *chunk)
+{
     return chunk->directory_entry;
 }
 
-bool paging_is_aligned(void *addr) {
+bool paging_is_aligned(void *addr)
+{
     return ((uint32_t)addr % PAGING_PAGE_SIZE) == 0;
 }
 
-int paging_get_indexes(void *virtual_address, uint32_t *directory_index_out, uint32_t *table_index_out) {
+int paging_get_indexes(void *virtual_address, uint32_t *directory_index_out, uint32_t *table_index_out)
+{
     int res = 0;
     if (!paging_is_aligned(virtual_address))
     {
@@ -64,7 +68,8 @@ out:
     return res;
 }
 
-void* paging_align_address(void* ptr) {
+void* paging_align_address(void* ptr)
+{
     if ((uint32_t)ptr % PAGING_PAGE_SIZE)
     {
         return (void*)((uint32_t)ptr + PAGING_PAGE_SIZE - ((uint32_t)ptr % PAGING_PAGE_SIZE));

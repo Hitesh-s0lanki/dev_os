@@ -17,6 +17,7 @@ _start:
     mov ebp, 0x00200000
     mov esp, ebp
 
+
     ; Remap the master PIC
     mov al, 00010001b
     out 0x20, al ; Tell master PIC

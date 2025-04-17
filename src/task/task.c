@@ -6,7 +6,7 @@
 #include "memory/memory.h"
 #include "string/string.h"
 #include "memory/paging/paging.h"
-// #include "loader/formats/elfloader.h"
+#include "loader/formats/elfloader.h"
 #include "idt/idt.h"
 
 // The current task that is running
@@ -34,7 +34,7 @@ struct task *task_new(struct process *process)
     }
 
     res = task_init(task, process);
-    if (res != GADGETOS_ALL_OK)
+    if (res != PEACHOS_ALL_OK)
     {
         goto out;
     }
@@ -158,7 +158,7 @@ int copy_string_from_task(struct task* task, void* virtual, void* phys, int max)
     paging_map(task->page_directory, tmp, tmp, PAGING_IS_WRITEABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
     paging_switch(task->page_directory);
     strncpy(tmp, virtual, max);
-    // kernel_page();
+    kernel_page();
 
     res = paging_set(task_directory, tmp, old_entry);
     if (res < 0)
@@ -220,15 +220,15 @@ int task_init(struct task *task, struct process *process)
         return -EIO;
     }
 
-    task->registers.ip = GADGETOS_PROGRAM_VIRTUAL_ADDRESS;
+    task->registers.ip = PEACHOS_PROGRAM_VIRTUAL_ADDRESS;
     if (process->filetype == PROCESS_FILETYPE_ELF)
     {
-        // task->registers.ip = elf_header(process->elf_file)->e_entry;
+        task->registers.ip = elf_header(process->elf_file)->e_entry;
     }
 
     task->registers.ss = USER_DATA_SEGMENT;
     task->registers.cs = USER_CODE_SEGMENT;
-    task->registers.esp = GADGETOS_PROGRAM_VIRTUAL_STACK_ADDRESS_START;
+    task->registers.esp = PEACHOS_PROGRAM_VIRTUAL_STACK_ADDRESS_START;
 
     task->process = process;
 
@@ -247,7 +247,7 @@ void* task_get_stack_item(struct task* task, int index)
     result = (void*) sp_ptr[index];
 
     // Switch back to the kernel page
-    // kernel_page();
+    kernel_page();
 
     return result;
 }

@@ -4,11 +4,12 @@
 #include "memory/memory.h"
 #include <stdbool.h>
 
-static int heap_validate_table(void* ptr, void* end, struct heap_table* table) {
+static int heap_validate_table(void* ptr, void* end, struct heap_table* table)
+{
     int res = 0;
 
     size_t table_size = (size_t)(end - ptr);
-    size_t total_blocks = table_size / GADGETOS_HEAP_BLOCK_SIZE;
+    size_t total_blocks = table_size / PEACHOS_HEAP_BLOCK_SIZE;
     if (table->total != total_blocks)
     {
         res = -EINVARG;
@@ -19,11 +20,13 @@ out:
     return res;
 }
 
-static bool heap_validate_alignment(void* ptr) {
-    return ((unsigned int)ptr % GADGETOS_HEAP_BLOCK_SIZE) == 0;
+static bool heap_validate_alignment(void* ptr)
+{
+    return ((unsigned int)ptr % PEACHOS_HEAP_BLOCK_SIZE) == 0;
 }
 
-int heap_create(struct heap* heap, void* ptr, void* end, struct heap_table* table) {
+int heap_create(struct heap* heap, void* ptr, void* end, struct heap_table* table)
+{
     int res = 0;
 
     if (!heap_validate_alignment(ptr) || !heap_validate_alignment(end))
@@ -49,22 +52,25 @@ out:
     return res;
 }
 
-static uint32_t heap_align_value_to_upper(uint32_t val) {
-    if ((val % GADGETOS_HEAP_BLOCK_SIZE) == 0)
+static uint32_t heap_align_value_to_upper(uint32_t val)
+{
+    if ((val % PEACHOS_HEAP_BLOCK_SIZE) == 0)
     {
         return val;
     }
 
-    val = (val - ( val % GADGETOS_HEAP_BLOCK_SIZE));
-    val += GADGETOS_HEAP_BLOCK_SIZE;
+    val = (val - ( val % PEACHOS_HEAP_BLOCK_SIZE));
+    val += PEACHOS_HEAP_BLOCK_SIZE;
     return val;
 }
 
-static int heap_get_entry_type(HEAP_BLOCK_TABLE_ENTRY entry) {
+static int heap_get_entry_type(HEAP_BLOCK_TABLE_ENTRY entry)
+{
     return entry & 0x0f;
 }
 
-int heap_get_start_block(struct heap* heap, uint32_t total_blocks) {
+int heap_get_start_block(struct heap* heap, uint32_t total_blocks)
+{
     struct heap_table* table = heap->table;
     int bc = 0;
     int bs = -1;
@@ -99,11 +105,13 @@ int heap_get_start_block(struct heap* heap, uint32_t total_blocks) {
 
 }
 
-void* heap_block_to_address(struct heap* heap, int block) {
-    return heap->saddr + (block * GADGETOS_HEAP_BLOCK_SIZE);
+void* heap_block_to_address(struct heap* heap, int block)
+{
+    return heap->saddr + (block * PEACHOS_HEAP_BLOCK_SIZE);
 }
 
-void heap_mark_blocks_taken(struct heap* heap, int start_block, int total_blocks) {
+void heap_mark_blocks_taken(struct heap* heap, int start_block, int total_blocks)
+{
     int end_block = (start_block + total_blocks)-1;
     
     HEAP_BLOCK_TABLE_ENTRY entry = HEAP_BLOCK_TABLE_ENTRY_TAKEN | HEAP_BLOCK_IS_FIRST;
@@ -123,7 +131,8 @@ void heap_mark_blocks_taken(struct heap* heap, int start_block, int total_blocks
     }
 }
 
-void* heap_malloc_blocks(struct heap* heap, uint32_t total_blocks) {
+void* heap_malloc_blocks(struct heap* heap, uint32_t total_blocks)
+{
     void* address = 0;
 
     int start_block = heap_get_start_block(heap, total_blocks);
@@ -141,7 +150,8 @@ out:
     return address;
 }
 
-void heap_mark_blocks_free(struct heap* heap, int starting_block) {
+void heap_mark_blocks_free(struct heap* heap, int starting_block)
+{
     struct heap_table* table = heap->table;
     for (int i = starting_block; i < (int)table->total; i++)
     {
@@ -154,16 +164,19 @@ void heap_mark_blocks_free(struct heap* heap, int starting_block) {
     }
 }
 
-int heap_address_to_block(struct heap* heap, void* address) {
-    return ((int)(address - heap->saddr)) / GADGETOS_HEAP_BLOCK_SIZE;
+int heap_address_to_block(struct heap* heap, void* address)
+{
+    return ((int)(address - heap->saddr)) / PEACHOS_HEAP_BLOCK_SIZE;
 }
 
-void* heap_malloc(struct heap* heap, size_t size) {
+void* heap_malloc(struct heap* heap, size_t size)
+{
     size_t aligned_size = heap_align_value_to_upper(size);
-    uint32_t total_blocks = aligned_size / GADGETOS_HEAP_BLOCK_SIZE;
+    uint32_t total_blocks = aligned_size / PEACHOS_HEAP_BLOCK_SIZE;
     return heap_malloc_blocks(heap, total_blocks);
 }
 
-void heap_free(struct heap* heap, void* ptr) {
+void heap_free(struct heap* heap, void* ptr)
+{
     heap_mark_blocks_free(heap, heap_address_to_block(heap, ptr));
 }
